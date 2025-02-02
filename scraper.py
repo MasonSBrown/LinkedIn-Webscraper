@@ -20,8 +20,6 @@ TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
 TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER")
 YOUR_PHONE_NUMBER = os.getenv("YOUR_PHONE_NUMBER")
 
-print(f"Twilio Phone Number: {TWILIO_PHONE_NUMBER}")
-
 # Track seen jobs
 seen_jobs = set()
 
