@@ -66,7 +66,7 @@ def load_cookies(driver):
             driver.refresh()
             sleep(3)
             return
-        except Exception as e:
+        except (pickle.UnpicklingError, FileNotFoundError, IOError) as e:
             print(f"Error loading cookies: {e}")
     print("❌ Cookies not available or failed, logging in manually...")
     linkedin_login(driver)
