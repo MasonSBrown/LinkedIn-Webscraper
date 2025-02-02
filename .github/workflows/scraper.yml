@@ -5,6 +5,9 @@ on:
     - cron: "*/10 * * * *"  # Run every 10 minutes
   workflow_dispatch:
 
+permissions:
+  contents: write  # Grant write permission to contents
+
 jobs:
   run-scraper:
     runs-on: ubuntu-latest
@@ -13,7 +16,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
-          persist-credentials: true
+          persist-credentials: true  # Enable automatic token authentication
 
       - name: Set up Python
         uses: actions/setup-python@v2
