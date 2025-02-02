@@ -4,11 +4,11 @@ from twilio.rest import Client
 import schedule
 import time
 
-# Twilio Config (Replace with actual values)
-TWILIO_ACCOUNT_SID = 'your_account_sid'
-TWILIO_AUTH_TOKEN = 'your_auth_token'
-TWILIO_PHONE_NUMBER = 'your_twilio_number'
-YOUR_PHONE_NUMBER = 'your_phone_number'
+# Twilio Config
+TWILIO_ACCOUNT_SID = 'ACe74afe6b496aa6fa88949b464de7ec75'
+TWILIO_AUTH_TOKEN = '1fd09cd62598b1ccbce6f22b09f4d675'
+TWILIO_PHONE_NUMBER = '+18777133805'
+YOUR_PHONE_NUMBER = '5105759302'
 
 # Track seen jobs
 seen_jobs = set()
