@@ -42,7 +42,7 @@ jobs:
       - name: Commit and push changes
         run: |
           git add job_cache.json
-          git commit -m "Update job_cache.json"
+          git diff --cached --quiet || git commit -m "Update job_cache.json"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
