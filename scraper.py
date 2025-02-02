@@ -4,13 +4,13 @@ from twilio.rest import Client
 import schedule
 import time
 
-# Twilio Config
+# Twilio Config (Replace with actual values)
 TWILIO_ACCOUNT_SID = 'your_account_sid'
 TWILIO_AUTH_TOKEN = 'your_auth_token'
 TWILIO_PHONE_NUMBER = 'your_twilio_number'
 YOUR_PHONE_NUMBER = 'your_phone_number'
 
-# Set of already seen job IDs
+# Track seen jobs
 seen_jobs = set()
 
 # Function to scrape LinkedIn jobs
@@ -22,19 +22,27 @@ def scrape_jobs():
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
-    
-    response = requests.get(url, headers=headers)
+
+    try:
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status()  # Raise an error for bad status codes
+    except requests.RequestException as e:
+        print(f"Error fetching LinkedIn jobs: {e}")
+        return
+
     soup = BeautifulSoup(response.text, 'html.parser')
 
-    # Extract job details (adapt selectors as necessary based on LinkedIn's structure)
-    jobs = soup.find_all('a', class_='base-card__full-link')  # Update class selector if required
-    
+    # Extract job links (Adjust the selector if needed)
+    jobs = soup.find_all('a', class_='base-card__full-link')
+
     new_jobs = []
     for job in jobs:
-        job_id = job['href']
+        job_url = job['href']
+        job_id = job_url.split('?')[0]  # Extract stable job ID (removing query params)
+
         if job_id not in seen_jobs:
             seen_jobs.add(job_id)
-            new_jobs.append(job)
+            new_jobs.append(job_url)
 
     if new_jobs:
         notify_user(new_jobs)
@@ -42,16 +50,22 @@ def scrape_jobs():
 # Function to send SMS notifications
 def notify_user(new_jobs):
     client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-    for job in new_jobs:
-        job_link = job['href']
+    
+    # Combine multiple jobs into one message
+    job_list = "\n".join(new_jobs[:5])  # Limit to 5 to fit SMS length
+    message_body = f"New Software Engineer Intern jobs:\n{job_list}"
+
+    try:
         message = client.messages.create(
-            body=f"New Software Engineer Internship posted: {job_link}",
+            body=message_body,
             from_=TWILIO_PHONE_NUMBER,
             to=YOUR_PHONE_NUMBER
         )
-        print(f"Notification sent for job: {job_link}")
+        print(f"Notification sent! SID: {message.sid}")
+    except Exception as e:
+        print(f"Error sending Twilio message: {e}")
 
-# Schedule the scraper to run periodically
+# Schedule the scraper to run every 5 minutes
 schedule.every(5).minutes.do(scrape_jobs)
 
 # Keep the script running
