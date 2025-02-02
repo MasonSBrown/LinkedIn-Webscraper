@@ -3,7 +3,7 @@ import os
 from time import sleep
 
 from bs4 import BeautifulSoup
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -12,7 +12,7 @@ from twilio.base.exceptions import TwilioRestException, TwilioException
 from webdriver_manager.chrome import ChromeDriverManager
 
 # Load environment variables from .env file
-# load_dotenv()
+load_dotenv()
 
 # Twilio Config (KEEP PRIVATE THIS IS SENSITIVE INFORMATION)
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
@@ -55,7 +55,7 @@ def scrape_jobs():
 
     # Set up Chrome options
     chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Run in background (no GUI)
+    # chrome_options.add_argument("--headless")  # Run in background (no GUI)
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument(
