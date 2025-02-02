@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import pickle
 from time import sleep
 
 from bs4 import BeautifulSoup
@@ -26,6 +27,7 @@ YOUR_PHONE_NUMBER = os.getenv("YOUR_PHONE_NUMBER")
 seen_jobs = set()
 
 CACHE_FILE = "job_cache.json"
+COOKIE_FILE = "cookies.pkl"  # New constant
 
 
 def load_cache():
@@ -51,6 +53,30 @@ def clean_job_text(li_entity):
     time_posted = li_entity.find("time").get_text(strip=True)
     return f"{title} at {company}, {location} - {time_posted}"
 
+def load_cookies(driver):
+    # Attempt to load saved cookies, fallback to manual login if necessary
+    if os.path.exists(COOKIE_FILE):
+        try:
+            driver.get("https://www.linkedin.com")  # Open LinkedIn first
+            sleep(2)
+            cookies = pickle.load(open(COOKIE_FILE, "rb"))
+            for cookie in cookies:
+                driver.add_cookie(cookie)
+            print("🔑 Cookies loaded successfully!")
+            driver.refresh()
+            sleep(3)
+            return
+        except Exception as e:
+            print(f"Error loading cookies: {e}")
+    print("❌ Cookies not available or failed, logging in manually...")
+    linkedin_login(driver)
+
+
+def save_cookies(driver):
+    # Save current cookies to COOKIE_FILE
+    with open(COOKIE_FILE, "wb") as file:
+        pickle.dump(driver.get_cookies(), file)
+    print("🔑 Cookies saved successfully!")
 
 def linkedin_login(driver):
     driver.get("https://www.linkedin.com/login")
@@ -61,6 +87,7 @@ def linkedin_login(driver):
     password_input.send_keys(os.getenv("LINKEDIN_PASSWORD"))
     password_input.submit()
     sleep(5)  # Wait for login to complete
+    save_cookies(driver)  # Save cookies after login
 
 
 def scrape_jobs():
@@ -80,8 +107,8 @@ def scrape_jobs():
         service=Service(ChromeDriverManager().install()), options=chrome_options
     )
 
-    # Log into LinkedIn
-    linkedin_login(driver)
+    # Log into LinkedIn using cookies; if they fail, perform manual login
+    load_cookies(driver)  # Use cookies login as first attempt
 
     # Open LinkedIn jobs page
     url = "https://www.linkedin.com/jobs/search?keywords=Software%20Engineer%20Intern&location=United%20States&geoId=103644278&f_TPR=r600&position=1&pageNum=0"
