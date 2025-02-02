@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          persist-credentials: false  # Disable automatic token authentication
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -31,3 +33,16 @@ jobs:
           YOUR_PHONE_NUMBER: ${{ secrets.YOUR_PHONE_NUMBER }}
         run: |
           python scraper.py
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit and push changes
+        run: |
+          git add job_cache.json
+          git commit -m "Update job_cache.json"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
