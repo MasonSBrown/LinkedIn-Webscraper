@@ -10,6 +10,7 @@ from selenium.webdriver.chrome.service import Service
 from twilio.rest import Client
 from twilio.base.exceptions import TwilioRestException, TwilioException
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
 
 # Load environment variables from .env file
 load_dotenv()
@@ -50,6 +51,17 @@ def clean_job_text(li_entity):
     return f"{title} at {company}, {location} - {time_posted}"
 
 
+def linkedin_login(driver):
+    driver.get("https://www.linkedin.com/login")
+    sleep(3)  # Allow page to load
+    email_input = driver.find_element(By.ID, "username")
+    password_input = driver.find_element(By.ID, "password")
+    email_input.send_keys(os.getenv("LINKEDIN_EMAIL"))
+    password_input.send_keys(os.getenv("LINKEDIN_PASSWORD"))
+    password_input.submit()
+    sleep(5)  # Wait for login to complete
+
+
 def scrape_jobs():
     print("🚀 Launching browser...")
 
@@ -66,6 +78,9 @@ def scrape_jobs():
     driver = webdriver.Chrome(
         service=Service(ChromeDriverManager().install()), options=chrome_options
     )
+
+    # Log into LinkedIn
+    linkedin_login(driver)
 
     # Open LinkedIn jobs page
     url = "https://www.linkedin.com/jobs/search?keywords=Software%20Engineer%20Intern&location=United%20States&geoId=103644278&f_TPR=r15000&position=1&pageNum=0"
