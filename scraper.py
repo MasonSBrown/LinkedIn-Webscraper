@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from time import sleep
 
 from bs4 import BeautifulSoup
@@ -83,7 +84,7 @@ def scrape_jobs():
     linkedin_login(driver)
 
     # Open LinkedIn jobs page
-    url = "https://www.linkedin.com/jobs/search?keywords=Software%20Engineer%20Intern&location=United%20States&geoId=103644278&f_TPR=r15000&position=1&pageNum=0"
+    url = "https://www.linkedin.com/jobs/search?keywords=Software%20Engineer%20Intern&location=United%20States&geoId=103644278&f_TPR=r600&position=1&pageNum=0"
 
     driver.get(url)
     sleep(5)  # Allow time for page to load
@@ -93,20 +94,29 @@ def scrape_jobs():
     soup = BeautifulSoup(page_source, "html.parser")
 
     # Extract the ul block and all li entities
-    ul_block = soup.find("ul", class_="jobs-search__results-list")
-    li_entities = ul_block.find_all("li") if ul_block else []
+    ul_blocks = soup.find_all("ul")
+    li_entities = ul_blocks[7].find_all("li")
 
     # Load cache
     these_seen_jobs = load_cache()
 
     new_jobs = []
-    for li in li_entities:
-        job_text = clean_job_text(li)
-        job_id = job_text.split(" - ", maxsplit=1)[0]  # Use job title and company as unique ID
+    wanted_text = ''
 
-        if job_id not in these_seen_jobs:
-            these_seen_jobs.add(job_id)
-            new_jobs.append(job_text)
+    for idx, li in enumerate(li_entities):
+        li_text = li.text
+        if li_text == "\n\nPromoted\n\n":
+            # Process the current segment
+            text = wanted_text
+            groups = [s for s in re.split(r'\s{2,}', text.strip()) if s]
+            groups[0] = groups[0][:len(groups[0]) // 2]
+            job_id = groups[0] + groups[1]  # Title plus company name
+            if job_id not in these_seen_jobs:
+                these_seen_jobs.add(job_id)
+                new_jobs.append(" ".join(groups))
+        else:
+            if idx == 0:
+                wanted_text = li_text
 
     driver.quit()  # Close browser
 
