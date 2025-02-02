@@ -111,7 +111,8 @@ def scrape_jobs():
             groups = [s for s in re.split(r'\s{2,}', text.strip()) if s]
             groups[0] = groups[0][:len(groups[0]) // 2]
             job_id = groups[0] + groups[1]  # Title plus company name
-            if job_id not in these_seen_jobs:
+            # New check: add job only if it contains 'intern' (case-insensitive)
+            if "intern" in job_id.lower() and job_id not in these_seen_jobs:
                 these_seen_jobs.add(job_id)
                 new_jobs.append(" ".join(groups))
         else:
