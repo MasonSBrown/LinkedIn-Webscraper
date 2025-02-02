@@ -118,8 +118,9 @@ def notify_user(new_jobs):
         print(f"❌ Twilio error: {e}")
 
 
-# Run the scraper in a loop with a pause every 10 minutes
-while True:
+def main():
     scrape_jobs()
-    print("⏸️ Pausing for 10 minutes...")
-    sleep(600)  # Pause for 600 seconds (10 minutes)
+
+
+if __name__ == "__main__":
+    main()
