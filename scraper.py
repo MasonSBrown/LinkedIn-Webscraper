@@ -95,7 +95,7 @@ def scrape_jobs():
 
     # Set up Chrome options
     chrome_options = Options()
-    # chrome_options.add_argument("--headless")  # Run in background (no GUI)
+    chrome_options.add_argument("--headless")  # Run in background (no GUI)
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument(
