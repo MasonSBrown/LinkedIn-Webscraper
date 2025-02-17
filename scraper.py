@@ -2,6 +2,7 @@ import json
 import os
 import re
 import pickle
+import base64  # Added for decoding cookies from COOKIES_B64
 from time import sleep
 
 from bs4 import BeautifulSoup
@@ -54,20 +55,35 @@ def clean_job_text(li_entity):
     return f"{title} at {company}, {location} - {time_posted}"
 
 def load_cookies(driver):
-    # Attempt to load saved cookies, fallback to manual login if necessary
+    cookies_b64 = os.getenv("COOKIES_B64")
+    if cookies_b64:
+        try:
+            cookie_bytes = base64.b64decode(cookies_b64)
+            cookies = pickle.loads(cookie_bytes)
+            driver.get("https://www.linkedin.com")  # Open LinkedIn first
+            sleep(2)
+            for cookie in cookies:
+                driver.add_cookie(cookie)
+            print("🔑 Cookies loaded from COOKIES_B64 secret successfully!")
+            driver.refresh()
+            sleep(3)
+            return
+        except Exception as e:
+            print(f"Error loading cookies from COOKIES_B64: {e}")
+    # Fallback to file-based cookies if available
     if os.path.exists(COOKIE_FILE):
         try:
-            driver.get("https://www.linkedin.com")  # Open LinkedIn first
+            driver.get("https://www.linkedin.com")
             sleep(2)
             cookies = pickle.load(open(COOKIE_FILE, "rb"))
             for cookie in cookies:
                 driver.add_cookie(cookie)
-            print("🔑 Cookies loaded successfully!")
+            print("🔑 Cookies loaded from file successfully!")
             driver.refresh()
             sleep(3)
             return
         except (pickle.UnpicklingError, FileNotFoundError, IOError) as e:
-            print(f"Error loading cookies: {e}")
+            print(f"Error loading cookies from file: {e}")
     print("❌ Cookies not available or failed, logging in manually...")
     linkedin_login(driver)
 
