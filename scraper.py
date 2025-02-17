@@ -92,10 +92,10 @@ def load_cookies(driver):
     # if os.getenv("LINKEDIN_EMAIL") and os.getenv("LINKEDIN_PASSWORD"):
     #     linkedin_login(driver)
 
-    
-    else:
-        print("❌ Missing LinkedIn credentials; cannot login manually.")
-        exit(1)
+
+    # else:
+    #     print("❌ Missing LinkedIn credentials; cannot login manually.")
+    #     exit(1)
 
 def linkedin_login(driver):
     # Ensure credentials are provided
