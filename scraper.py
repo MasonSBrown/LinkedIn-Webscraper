@@ -79,12 +79,18 @@ def save_cookies(driver):
     print("🔑 Cookies saved successfully!")
 
 def linkedin_login(driver):
+    # Ensure credentials are provided
+    email = os.getenv("LINKEDIN_EMAIL")
+    password = os.getenv("LINKEDIN_PASSWORD")
+    if not email or not password:
+        raise ValueError("Missing LinkedIn credentials: set LINKEDIN_EMAIL and LINKEDIN_PASSWORD environment variables.")
+    
     driver.get("https://www.linkedin.com/login")
     sleep(3)  # Allow page to load
     email_input = driver.find_element(By.ID, "username")
     password_input = driver.find_element(By.ID, "password")
-    email_input.send_keys(os.getenv("LINKEDIN_EMAIL"))
-    password_input.send_keys(os.getenv("LINKEDIN_PASSWORD"))
+    email_input.send_keys(email)
+    password_input.send_keys(password)
     password_input.submit()
     sleep(5)  # Wait for login to complete
     save_cookies(driver)  # Save cookies after login
