@@ -70,7 +70,6 @@ def load_cookies(driver):
             return
         except Exception as e:
             print(f"Error loading cookies from COOKIES_B64: {e}")
-    # Fallback to file-based cookies if available
     if os.path.exists(COOKIE_FILE):
         try:
             driver.get("https://www.linkedin.com")
@@ -84,9 +83,12 @@ def load_cookies(driver):
             return
         except (pickle.UnpicklingError, FileNotFoundError, IOError) as e:
             print(f"Error loading cookies from file: {e}")
-    print("❌ Cookies not available or failed, logging in manually...")
-    linkedin_login(driver)
-
+    print("❌ Cookies not available or failed.")
+    if os.getenv("LINKEDIN_EMAIL") and os.getenv("LINKEDIN_PASSWORD"):
+        linkedin_login(driver)
+    else:
+        print("❌ Missing LinkedIn credentials; cannot login manually.")
+        exit(1)
 
 def save_cookies(driver):
     # Save current cookies to COOKIE_FILE
