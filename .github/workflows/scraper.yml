@@ -1,9 +1,10 @@
-name: Run LinkedIn Scraper
+name: LinkedIn WebScraper
 
-#Comment back in if you want github to run the scraper every 10 minutes
 on:
-  # schedule:
-  #   - cron: "*/10 * * * *"  # Run every 10 minutes
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * *'  # Run daily at midnight
   workflow_dispatch:
 
 permissions:
@@ -12,31 +13,31 @@ permissions:
 jobs:
   run-scraper:
     runs-on: ubuntu-latest
+    timeout-minutes: 30  # Safety timeout since scraper.py has an infinite loop
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-        with:
-          persist-credentials: true  # Enable automatic token authentication
+        uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
+          python-version: '3.9'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install selenium webdriver_manager bs4 python-dotenv twilio
 
-      - name: Run scraper
+      - name: Run LinkedIn WebScraper
         env:
+          LINKEDIN_EMAIL: ${{ secrets.LINKEDIN_EMAIL }}
+          LINKEDIN_PASSWORD: ${{ secrets.LINKEDIN_PASSWORD }}
           TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
           TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
           TWILIO_PHONE_NUMBER: ${{ secrets.TWILIO_PHONE_NUMBER }}
           YOUR_PHONE_NUMBER: ${{ secrets.YOUR_PHONE_NUMBER }}
-        run: |
-          python scraper.py
+        run: python scraper.py
 
       - name: Configure Git
         run: |
