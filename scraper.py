@@ -70,32 +70,28 @@ def load_cookies(driver):
         except Exception as e:
             print(f"Error loading cookies from COOKIES_B64: {e}")
     # Fallback: try to load from cookies.b64 file in the repository
-
-
-    # if os.path.exists("cookies.b64"):
-    #     try:
-    #         with open("cookies.b64", "r", encoding="utf-8") as file:
-    #             file_b64 = file.read().strip()
-    #         cookie_bytes = base64.b64decode(file_b64)
-    #         cookies = pickle.loads(cookie_bytes)
-    #         driver.get("https://www.linkedin.com")
-    #         sleep(2)
-    #         for cookie in cookies:
-    #             driver.add_cookie(cookie)
-    #         print("🔑 Cookies loaded from cookies.b64 file successfully!")
-    #         driver.refresh()
-    #         sleep(3)
-    #         return
-    #     except Exception as e:
-    #         print(f"Error loading cookies from cookies.b64 file: {e}")
-    # print("❌ Cookies not available or failed.")
-    # if os.getenv("LINKEDIN_EMAIL") and os.getenv("LINKEDIN_PASSWORD"):
-    #     linkedin_login(driver)
-
-
-    # else:
-    #     print("❌ Missing LinkedIn credentials; cannot login manually.")
-    #     exit(1)
+    if os.path.exists("cookies.b64"):
+        try:
+            with open("cookies.b64", "r", encoding="utf-8") as file:
+                file_b64 = file.read().strip()
+            cookie_bytes = base64.b64decode(file_b64)
+            cookies = pickle.loads(cookie_bytes)
+            driver.get("https://www.linkedin.com")
+            sleep(2)
+            for cookie in cookies:
+                driver.add_cookie(cookie)
+            print("🔑 Cookies loaded from cookies.b64 file successfully!")
+            driver.refresh()
+            sleep(3)
+            return
+        except Exception as e:
+            print(f"Error loading cookies from cookies.b64 file: {e}")
+    print("❌ Cookies not available or failed.")
+    if os.getenv("LINKEDIN_EMAIL") and os.getenv("LINKEDIN_PASSWORD"):
+        linkedin_login(driver)
+    else:
+        print("❌ Missing LinkedIn credentials; cannot login manually.")
+        exit(1)
 
 def linkedin_login(driver):
     # Ensure credentials are provided
