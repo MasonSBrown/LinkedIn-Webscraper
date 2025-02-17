@@ -23,13 +23,12 @@ TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
 TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER")
 YOUR_PHONE_NUMBER = os.getenv("YOUR_PHONE_NUMBER")
+COOKIES_B64 = os.getenv("COOKIES_B64")
 
 # Track seen jobs
 seen_jobs = set()
 
 CACHE_FILE = "job_cache.json"
-COOKIE_FILE = "cookies.pkl"  # New constant
-
 
 def load_cache():
     if os.path.exists(CACHE_FILE):
@@ -70,31 +69,12 @@ def load_cookies(driver):
             return
         except Exception as e:
             print(f"Error loading cookies from COOKIES_B64: {e}")
-    if os.path.exists(COOKIE_FILE):
-        try:
-            driver.get("https://www.linkedin.com")
-            sleep(2)
-            cookies = pickle.load(open(COOKIE_FILE, "rb"))
-            for cookie in cookies:
-                driver.add_cookie(cookie)
-            print("🔑 Cookies loaded from file successfully!")
-            driver.refresh()
-            sleep(3)
-            return
-        except (pickle.UnpicklingError, FileNotFoundError, IOError) as e:
-            print(f"Error loading cookies from file: {e}")
-    print("❌ Cookies not available or failed.")
+    print("❌ COOKIES_B64 not set or failed.")
     if os.getenv("LINKEDIN_EMAIL") and os.getenv("LINKEDIN_PASSWORD"):
         linkedin_login(driver)
     else:
         print("❌ Missing LinkedIn credentials; cannot login manually.")
         exit(1)
-
-def save_cookies(driver):
-    # Save current cookies to COOKIE_FILE
-    with open(COOKIE_FILE, "wb") as file:
-        pickle.dump(driver.get_cookies(), file)
-    print("🔑 Cookies saved successfully!")
 
 def linkedin_login(driver):
     # Ensure credentials are provided
@@ -111,7 +91,6 @@ def linkedin_login(driver):
     password_input.send_keys(password)
     password_input.submit()
     sleep(5)  # Wait for login to complete
-    save_cookies(driver)  # Save cookies after login
 
 
 def scrape_jobs():
