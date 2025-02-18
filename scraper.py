@@ -191,10 +191,8 @@ def notify_user(new_jobs):
 
 
 def main():
-    while True:
-        scrape_jobs()
-        print("Waiting 10 minutes before next check...")
-        sleep(600)
+    scrape_jobs()
+    print("Waiting 10 minutes before next check...")
 
 if __name__ == "__main__":
     main()
