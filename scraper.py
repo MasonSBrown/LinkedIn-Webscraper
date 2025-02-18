@@ -23,7 +23,6 @@ TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
 TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER")
 YOUR_PHONE_NUMBER = os.getenv("YOUR_PHONE_NUMBER")
-COOKIES_B64 = os.getenv("COOKIES_B64")
 
 # Track seen jobs
 seen_jobs = set()
@@ -80,7 +79,7 @@ def load_cookies(driver):
             sleep(2)
             for cookie in cookies:
                 driver.add_cookie(cookie)
-            print("🔑 Cookies loaded from cookies.b64 file successfully!")
+            print("🔑 Cookies loaded from cookies.b64 file successfully! 2")
             driver.refresh()
             sleep(3)
             return
