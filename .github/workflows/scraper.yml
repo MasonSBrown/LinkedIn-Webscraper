@@ -1,9 +1,11 @@
 name: Run LinkedIn Scraper
 
-#Comment back in if you want github to run the scraper every 10 minutes
 on:
   schedule:
-    - cron: "*/10 * * * *"  # Run every 10 minutes
+    # Runs every 10 minutes from 8AM to 3:50PM PST on Monday to Friday
+    - cron: "*/10 16-23 * * 1-5"
+    # For PST Monday-Friday 4:00 PM - 5:50 PM (which is UTC 00:00 - 01:50 on Tue-Sat)
+    - cron: "*/10 0-1 * * 2-6"
   workflow_dispatch:
 
 permissions:
