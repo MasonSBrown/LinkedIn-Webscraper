@@ -1,10 +1,12 @@
 name: Run LinkedIn Scraper
 
 on:
+  push:
+    branches: [ main ]
   schedule:
     # Runs every 10 minutes from 8AM to 3:50PM PST on Monday to Friday
     - cron: "*/10 16-23 * * 1-5"
-    # For PST Monday-Friday 4:00 PM - 5:50 PM (which is UTC 00:00 - 01:50 on Tue-Sat)
+    # Runs every 10 minutes from 4:00 PM - 5:50 PM PST (UTC 00:00 - 01:50 on Tue-Sat)
     - cron: "*/10 0-1 * * 2-6"
   workflow_dispatch:
 
@@ -39,7 +41,7 @@ jobs:
           YOUR_PHONE_NUMBER: ${{ secrets.YOUR_PHONE_NUMBER }}
           LINKEDIN_EMAIL: ${{ secrets.LINKEDIN_EMAIL }}
           LINKEDIN_PASSWORD: ${{ secrets.LINKEDIN_PASSWORD }}
-          COOKIES_B64: ${{ secrets.COOKIES_B64 }}  # Added COOKIES_B64 secret
+          COOKIES_B64: ${{ secrets.COOKIES_B64 }}
         run: |
           python scraper.py
 
@@ -55,3 +57,4 @@ jobs:
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
