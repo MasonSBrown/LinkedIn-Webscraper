@@ -2,11 +2,10 @@ name: Run LinkedIn Scraper
 
 on:
   schedule:
-    - cron: "*/5 * * * *"
-    # Runs every 10 minutes from 8AM to 3:50PM PST on Monday to Friday
-    # - cron: "*/10 16-23 * * 1-5"
-    # Runs every 10 minutes from 4:00 PM - 5:50 PM PST (UTC 00:00 - 01:50 on Tue-Sat)
-    # - cron: "*/10 0-1 * * 2-6"
+    Runs every 10 minutes from 8AM to 3:50PM PST on Monday to Friday
+    - cron: "*/10 16-23 * * 1-5"
+    Runs every 10 minutes from 4:00 PM - 5:50 PM PST (UTC 00:00 - 01:50 on Tue-Sat)
+    - cron: "*/10 0-1 * * 2-6"
   workflow_dispatch:
 
 permissions:
