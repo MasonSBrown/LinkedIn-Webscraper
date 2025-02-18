@@ -35,6 +35,8 @@ jobs:
           TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
           TWILIO_PHONE_NUMBER: ${{ secrets.TWILIO_PHONE_NUMBER }}
           YOUR_PHONE_NUMBER: ${{ secrets.YOUR_PHONE_NUMBER }}
+          LINKEDIN_EMAIL: ${{ secrets.LINKEDIN_EMAIL }}
+          LINEKDIN_PASSWORD: ${{ secrets.LINEKDIN_PASSWORD }}
           COOKIES_B64: ${{ secrets.COOKIES_B64 }}  # Added COOKIES_B64 secret
         run: |
           python scraper.py
