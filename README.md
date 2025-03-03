@@ -1,4 +1,4 @@
-# LinkedIn WebScraper
+# JobPulse
 
 ## NOVELTY
 - This scraper continuously checks for job postings that have been listed within the last 10 minutes—capturing fresh opportunities even before LinkedIn pushes out its standard notifications.
